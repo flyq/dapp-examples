@@ -81,7 +81,7 @@ contract Hourglass {
     // amount of shares for each address (scaled number)
     mapping(address => uint256) internal tokenBalanceLedger_;
     mapping(address => uint256) internal referralBalance_;
-    mapping(address => uint256) internal payoutsTo_;
+    mapping(address => int256) internal payoutsTo_;
     mapping(address => uint256) internal ambassadorAccumulatedQuota_;
     uint256 internal tokenSupply_ = 0;
     uint256 internal profitPerShare_;
@@ -98,7 +98,7 @@ contract Hourglass {
     /*
     * -- APPLICATION ENTRY POINTS --  
     */
-    function Hourglass()
+    constructor()
         public
     {
         // add administrators here
@@ -205,7 +205,7 @@ contract Hourglass {
         withdraw();
 
         // update dividends tracker
-        uint256 _updatedPayouts =  profitPerShare_ * _tokens;
+        int256 _updatedPayouts =  int256(profitPerShare_ * _tokens);
         payoutsTo_[_customerAddress] -= _updatedPayouts; 
 
 
@@ -516,7 +516,7 @@ contract Hourglass {
         
         // Tells the contract that the buyer doesn't deserve dividends for the tokens before they owned them;
         //really i know you think you do but you don't
-        uint256 _updatedPayouts =  (profitPerShare_ * _amountOfTokens) - _fee;
+        int256 _updatedPayouts = (int256) ((profitPerShare_ * _amountOfTokens) - _fee);
         payoutsTo_[_customerAddress] += _updatedPayouts;
         
         // fire event
